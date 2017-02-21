@@ -1,0 +1,6 @@
+[submodule "data"]
+	path = data
+	url = git@github.com:FakeNewsChallenge/fnc-1.git
+[submodule "skipthoughts"]
+	path = skipthoughts
+	url = git@github.com:fastforwardlabs/skip-thoughts.git
