@@ -10,11 +10,11 @@ import utils
 
 from functools import partial
 import itertools as IT
-import random
 
 
 SKIPTHOUGHTS_DATA = '/home/micha/ssd/work/tldr/skipthoughts/data/'
 memory = Memory(cachedir='./cache/', verbose=1)
+st.encode = memory.cache(st.encode, ignore=['model'], verbose=0)
 
 
 @memory.cache
@@ -46,6 +46,12 @@ def semantic_similarity_feature(articles):
 
 @memory.cache
 def headline_vector_merge_mean(articles):
+    """
+    Some article titles have more than one sentence in the title. To have
+    better comparison with the semantic similarity task for skipthoughts, we
+    need this to be one vector. This extractor simply takes the mean vector of
+    all headline vectors.
+    """
     for article in tqdm(articles, 'merging headline vectors'):
         article['headline_vector'] = article['headline_vectors'].mean(axis=0)
     return articles
@@ -54,6 +60,14 @@ def headline_vector_merge_mean(articles):
 @memory.cache
 def skipthoughts_articles(articles, max_title_sentences=None,
                           max_article_sentences=None):
+    """
+    Filter articles so that we have at max `max_title_sentences` sentences in
+    the title and `max_article_sentences` sentences in the body of the article.
+
+    Then, we add in the skipthought vectors for all sentences in the titles and
+    bodies of the articles into the `headline_vectors` and `article_vectors`
+    key.
+    """
     article_vectors = []
     st_model = st.load_model(data_path=SKIPTHOUGHTS_DATA)
     for article in tqdm(articles, 'skipthoughts encoding articles'):
@@ -66,7 +80,7 @@ def skipthoughts_articles(articles, max_title_sentences=None,
                 len(article_sentences) > max_article_sentences:
             continue
         vectors = st.encode(st_model, title_sentences + article_sentences,
-                            verbose=False, batch_size=128)
+                            verbose=False, batch_size=128).astype('float16')
         N = len(title_sentences)
         article['headline_vectors'] = vectors[:N]
         article['article_vectors'] = vectors[N:]
