@@ -62,7 +62,7 @@ def semantic_similarity_feature(articles):
             # save memory
             article.pop('headline_vector')
             article.pop('article_vectors')
-    dataset.attrs['group_names'] = np.asarray(group_names).astype('|S9')
+    dataset.attrs['group_names'] = np.asarray(group_names).astype('|S{}'.format(max(map(len, group_names))))
     dataset.close()
     return article
 
