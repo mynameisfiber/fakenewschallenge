@@ -4,10 +4,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from tqdm import tqdm
 import numpy as np
+import h5py
 import nltk
 
 import utils
 
+import pickle
 from functools import partial
 import itertools as IT
 
@@ -21,27 +23,48 @@ st.encode = memory.cache(st.encode, ignore=['model'], verbose=0)
 def semantic_similarity_feature(articles):
     num_article_sent = lambda a: len(a['article_vectors'])  # NOQA
     articles.sort(key=num_article_sent)
-    article_batches = []
-    target_batches = []
+    target_lookup = list({article['Stance'] for article in articles})
+    dataset = h5py.File("./data/dataset.hdf5", "w")
+    dataset.attrs['stance_lookup'] = np.asarray(target_lookup).astype('|S9')
+    group_names = []
     for num_sent, articles in IT.groupby(tqdm(articles, 'sem sim'),
                                          num_article_sent):
         articles = list(articles)
         num_articles = len(articles)
         sample_vec = articles[0]['headline_vector']
         vector_length = sample_vec.shape[0]
-        vector_group = np.zeros((num_articles, num_sent, 2*vector_length),
-                                dtype=sample_vec.dtype)
-        target_group = []
+        vector_group = dataset.create_dataset(
+            "features/num_sent_{}".format(num_sent),
+            (num_articles, num_sent, 2*vector_length),
+            dtype=sample_vec.dtype
+        )
+        lookup_group = dataset.create_dataset(
+            "article_lookup/num_sent_{}".format(num_sent),
+            (num_articles,),
+            dtype='uint8'
+        )
+        target_group = dataset.create_dataset(
+            "targets/num_sent_{}".format(num_sent),
+            (num_articles, len(target_lookup)),
+            dtype='uint8',
+        )
+        group_names.append('num_sent_{}'.format(num_sent))
         for a, article in enumerate(tqdm(articles, 'sem sim batch')):
             headline_vec = article['headline_vector']
-            target_group.append(article['Stance'])
+            target_idx = target_lookup.index(article['Stance'])
+            target_group[a, target_idx] = 1
+            lookup_group[a] = int(article['Body ID'])
+            article['article_batch_location'] = (num_sent, a)
             for s, sent_vector in enumerate(article['article_vectors']):
                 vec = np.hstack((np.abs(headline_vec - sent_vector),
                                  headline_vec * sent_vector))
                 vector_group[a, s, :] = vec
-        article_batches.append(vector_group)
-        target_batches.append(target_group)
-    return article_batches, target_batches
+            # save memory
+            article.pop('headline_vector')
+            article.pop('article_vectors')
+    dataset.attrs['group_names'] = np.asarray(group_names).astype('|S9')
+    dataset.close()
+    return article
 
 
 @memory.cache
@@ -54,6 +77,7 @@ def headline_vector_merge_mean(articles):
     """
     for article in tqdm(articles, 'merging headline vectors'):
         article['headline_vector'] = article['headline_vectors'].mean(axis=0)
+        article.pop('headline_vectors')  # save memory
     return articles
 
 
@@ -90,12 +114,14 @@ def skipthoughts_articles(articles, max_title_sentences=None,
 
 if __name__ == "__main__":
     data = utils.fnc_1_data('./data/')
-    vectorize_args = dict(max_article_sentences=32)
 
+    vectorize_args = dict(max_article_sentences=32)
     FT = partial(FunctionTransformer, validate=False)
     preprocess = Pipeline([
         ('vectorize', FT(skipthoughts_articles, kw_args=vectorize_args)),
         ('merge_headline', FT(headline_vector_merge_mean)),
         ('sem_sim_features', FT(semantic_similarity_feature)),
     ])
-    features = preprocess.transform(data)
+    articles = preprocess.transform(data)
+    with open("data/articles.pkl", "wb+") as fd:
+        pickle.dump(articles, fd)
