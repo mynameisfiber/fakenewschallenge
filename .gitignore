@@ -1,6 +1,6 @@
 *.sw*
 __pycache__
 cache/
-*.png
+models/
 *.hdf5
 *.pkl

@@ -28,15 +28,30 @@ $ source ./venv/bin/activate
 
 Self-contained within the [simple_model.py](simple_model.py) file.
 
-- independently tfidf the headline and the bodies into 1024 dim vectors
+- independently 1-2gram tfidf the headline and the bodies into 1024 dim vectors
 - concatinate tfidf vectors
 - feed into adaboost model
 
-Accuracy: 69.8%
+Accuracy: 71.6%
 
-Score per label: 0.2083 out of 0.4512 (46.18%)
+Score per label: 0.2137 out of 0.4464 (47.88%)
 
-![](simple_model_confusion.png)
+![](images/simple_model_confusion_adaboost.png)
+
+
+### Logistic Regression
+
+Self-contained within the [simple_model.py](simple_model.py) file.
+
+- independently 1-2gram tfidf the headline and the bodies into 1024 dim vectors
+- concatinate tfidf vectors
+- feed into logistic regression (C=0.95)
+
+Accuracy: 79.3%
+
+Score per label: 0.2574 out of 0.4464 (57.66%)
+
+![](images/simple_model_confusion_logistic_regression.png)
 
 
 ### Skip-thoughts + RNN
@@ -53,8 +68,8 @@ Accuracy: 93.9%
 
 Score per label: 0.4312 /.4518 (95.44)
 
-![](model_confusion_best_val_acc.png)
-![](model_history_best_val_acc.png)
+![](images/model_confusion_best_val_acc.png)
+![](images/model_history_best_val_acc.png)
 
 ## Notes
 - A random model would get an accuracy of 14.4%

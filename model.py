@@ -101,7 +101,7 @@ def make_plots(model, history, labels, valid_data_gen, num_valid_samples, postfi
 
     py.clf()
     plot_train_history({"model": history})
-    py.savefig("model_history_{}.png".format(postfix))
+    py.savefig("images/model_history_{}.png".format(postfix))
     
     y_valid = []
     y_valid_pred = []
@@ -124,7 +124,7 @@ def make_plots(model, history, labels, valid_data_gen, num_valid_samples, postfi
                .format(score, max_score, 100 * score / max_score)),
         normalize=True
     )
-    py.savefig("model_confusion_{}.png".format(postfix))
+    py.savefig("images/model_confusion_{}.png".format(postfix))
 
 
 
