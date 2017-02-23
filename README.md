@@ -2,6 +2,12 @@
 
 # Models
 
+|                | *Accuracy* | Score per Label | Max SpL | *Percent Score* |
+| -------------- | ---------- | --------------- | ------- | --------------- |
+| AdaBoost       | 69.8%      | 0.2083          | 0.4512  | 46.18%          |
+| Skipthougt+RNN | 93.9%      | 0.4312          | 0.4518  | 95.44%          |
+
+
 ## Strawman: Adaboost
 
 - independently tfidf the headline and the bodies into 1024 dim vectors
