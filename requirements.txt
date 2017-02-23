@@ -6,3 +6,4 @@ sklearn
 joblib
 
 tqdm
+-e git+https://github.com/mynameisfiber/pymicha.git#egg=pymicha[full]
