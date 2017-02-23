@@ -9,6 +9,7 @@
 - feed into adaboost model
 
 Accuracy: 69.8%
+
 Score per label: 0.2083 out of 0.4512 (46.18%)
 
 ![](simple_model_confusion.png)
@@ -22,6 +23,7 @@ Score per label: 0.2083 out of 0.4512 (46.18%)
 - Feed into GRU -> Dense
 
 Accuracy: 93.9%
+
 Score per label: 0.4312 /.4518 (95.44)
 
 ![](model_confusion_best_val_acc.png)
