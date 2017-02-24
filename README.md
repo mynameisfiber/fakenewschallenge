@@ -23,7 +23,7 @@ Results Summary
 |                     | *Accuracy* | Score per Label | Max SpL | *Percent Score* |
 | ------------------- | ---------- | --------------- | ------- | --------------- |
 | AdaBoost            | 71.6%      | 0.2137          | 0.4464  | 47.88%          |
-| Logistic Regression | 79.3%      | 0.2574          | 0.4464  | 57.66%          |
+| Logistic Regression | 76.1%      | 0.3135          | 0.4556  | 68.81%          |
 | Skipthougt + RNN    | 93.9%      | 0.4312          | 0.4518  | 95.44%          |
 
 
@@ -37,7 +37,7 @@ Self-contained within the [simple_model.py](simple_model.py) file.
 
 Accuracy: 71.6%
 
-Score per label: 0.2137 out of 0.4464 (47.88%)
+Score per label: 0.2137 out of 0.4464 (47.88%) [on 10% validation]
 
 ![](images/simple_model_confusion_adaboost.png)
 
@@ -50,9 +50,9 @@ Self-contained within the [simple_model.py](simple_model.py) file.
 - concatinate tfidf vectors
 - feed into logistic regression (C=0.95)
 
-Accuracy: 79.3%
+Accuracy: 76.1%
 
-Score per label: 0.2574 out of 0.4464 (57.66%)
+Score per label: 0.3135 out of 0.4556 (68.81%) [on 10% validation]
 
 ![](images/simple_model_confusion_logistic_regression.png)
 
@@ -69,7 +69,7 @@ and evaluated with [model.py](model.py).
 
 Accuracy: 93.9%
 
-Score per label: 0.4312 /.4518 (95.44)
+Score per label: 0.4312 /.4518 (95.44) [on 10% validation]
 
 ![](images/model_confusion_best_val_acc.png)
 ![](images/model_history_best_val_acc.png)

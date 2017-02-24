@@ -81,5 +81,5 @@ if __name__ == "__main__":
     labels = list({a['Stance'] for a in articles})
     targets = [labels.index(a['Stance']) for a in articles]
 
-    run_pipeline("logistic_regression", LogisticRegression(C=0.95), (1, 2))
+    run_pipeline("logistic_regression", LogisticRegression(C=0.95, class_weight='balanced'), (1, 2))
     run_pipeline("adaboost", AdaBoostClassifier(n_estimators=256), (1, 2))
